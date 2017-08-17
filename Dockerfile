@@ -27,11 +27,15 @@ ENV SWARM_CLIENT_VERSION="3.3" \
     PASSWORD_SECRET=""
 
 RUN adduser -G root -D jenkins && \
-    apk --update --no-cache add openjdk8-jre python py-pip git openssh ca-certificates openssl groff && \
+    apk --update --no-cache add openjdk8-jre python py-pip git openssh ca-certificates openssl groff bash && \
     wget -q https://repo.jenkins-ci.org/releases/org/jenkins-ci/plugins/swarm-client/${SWARM_CLIENT_VERSION}/swarm-client-${SWARM_CLIENT_VERSION}.jar -P /home/jenkins/ && \
     pip install docker-compose awscli && \
     rm /var/cache/apk/*
 
+
+COPY files/ecs-deploy /usr/local/bin/ecs-deploy
+RUN chown root:root /usr/local/bin/ecs-deploy
+RUN chmod +x /usr/local/bin/ecs-deploy
 COPY run.sh /run.sh
 RUN chmod +x /run.sh
 
