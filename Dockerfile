@@ -2,11 +2,11 @@ FROM docker:17.06
 
 MAINTAINER Viktor Farcic <viktor@farcic.com>
 
-ARG "version=0.2.0"
-ARG "build_date=unknown"
-ARG "commit_hash=unknown"
-ARG "vcs_url=unknown"
-ARG "vcs_branch=unknown"
+ARG version=0.2.0
+ARG build_date=unknown
+ARG commit_hash=unknown
+ARG vcs_url=unknown
+ARG vcs_branch=unknown
 
 LABEL org.label-schema.vendor="vfarcic" \
     org.label-schema.name="jenkins-swarm-agent" \
@@ -28,6 +28,8 @@ ENV SWARM_CLIENT_VERSION="3.3" \
 
 RUN adduser -G root -D jenkins && \
     apk --update --no-cache add openjdk8-jre python py-pip git openssh ca-certificates openssl groff bash jq && \
+    wget -qO- https://github.com/git-lfs/git-lfs/releases/download/v2.1.1/git-lfs-linux-amd64-2.1.1.tar.gz | tar xz && \
+    mv git-lfs-*/git-lfs /usr/bin/ && rm -rf git-lfs-* && git lfs install && \
     wget -q https://repo.jenkins-ci.org/releases/org/jenkins-ci/plugins/swarm-client/${SWARM_CLIENT_VERSION}/swarm-client-${SWARM_CLIENT_VERSION}.jar -P /home/jenkins/ && \
     pip install docker-compose awscli && \
     rm /var/cache/apk/*
